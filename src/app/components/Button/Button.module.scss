@@ -1,0 +1,117 @@
+@use './_components.scss';
+
+.btn {
+  @apply transition-[filter,opacity,color,background] duration-500;
+
+  .btnLabel {
+    @apply inline-block pt-[1px] uppercase btnMd break-keep;
+  }
+
+  .buttonIconWrap {
+    @apply inline-block transition-[background,color];
+  }
+
+  &.disabled,
+  &:disabled {
+    @apply pointer-events-none grayscale-[1] opacity-50;
+  }
+
+  &.md {
+    .btnLabel {
+      @apply btnSm;
+
+      @screen md {
+        @apply btnMd;
+      }
+    }
+  }
+
+  &.sm {
+    .btnLabel {
+      @apply btnSm;
+    }
+  }
+
+  &.lg {
+    .btnLabel {
+      @apply text-[1.125rem];
+    }
+  }
+
+  &.hasIcon {
+    @apply flex;
+
+    &.iconLeft {
+      @apply flex-row-reverse;
+    }
+
+    &.iconRight {
+      @apply flex-row;
+    }
+  }
+
+  &.contain,
+  &.outline {
+    @apply inline-flex justify-center items-center gap-[5px] h-[52px] leading-[52px] px-6 rounded-lg;
+
+    .buttonIconWrap {
+      @apply w-[14px] h-[14px];
+    }
+  }
+
+  &.default {
+    @apply inline-flex justify-center items-center gap-[5px];
+
+    .buttonIconWrap {
+      @apply w-[20px] h-[20px];
+    }
+  }
+
+  &.contain {
+    @apply text-white;
+
+    &.primary {
+      @apply bg-primary;
+
+      &:hover {
+        @apply bg-primary-dark;
+      }
+    }
+
+    &.secondary {
+      @apply text-secondary bg-white;
+
+      &:hover {
+        @apply bg-secondary text-white;
+      }
+    }
+
+    &.transparent {
+      @apply text-primary bg-transparent;
+
+      &:hover {
+        @apply text-primary-dark;
+      }
+    }
+  }
+
+  &.outline {
+    @apply border border-solid;
+
+    &.primary {
+      @apply border-primary;
+
+      &:hover {
+        @apply bg-primary text-white border-primary;
+      }
+    }
+
+    &.secondary {
+      @apply border-secondary;
+
+      &:hover {
+        @apply bg-secondary text-white border-secondary;
+      }
+    }
+  }
+}

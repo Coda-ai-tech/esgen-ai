@@ -1,0 +1,114 @@
+@tailwind base;
+
+@import './fonts';
+@import './components';
+
+@mixin root-font-var {
+  --font-roboto: 'Roboto Condensed';
+  --font-open-sans: 'Open Sans';
+  --font-noto-sans-tc: 'Noto Sans TC';
+  --font-noto-sans-sc: 'Noto Sans SC';
+
+  // Default fonts
+  --font-default: var(--font-open-sans), '微軟正黑體', 'Helvetica', sans-serif;
+  --font-title: var(--font-roboto), '微軟正黑體', 'Helvetica', sans-serif;
+
+  // Set Specific Lang
+  :lang(tc) {
+    --font-default: var(--font-noto-sans-tc), var(--font-open-sans), 'Microsoft JhengHei', '微軟正黑體', 'Helvetica',
+      sans-serif;
+    --font-title: var(--font-noto-sans-tc), var(--font-roboto), 'Microsoft JhengHei', '微軟正黑體', 'Helvetica',
+      sans-serif;
+  }
+}
+
+@mixin root-spacing {
+  --main-spacing-x-sm: 12px;
+  --main-spacing-x: 25px;
+  --section-spacing: 4rem;
+}
+
+:root {
+  @include root-font-var();
+  @include root-spacing();
+
+  --background: #ffffff;
+  --foreground: #171717;
+
+  --header-height: 66px;
+  --header-noticebar-height: 47px;
+
+  @screen lg {
+    --header-height: 66px;
+    --header-noticebar-height: 47px;
+  }
+}
+
+// Darkmode Var
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+@layer base {
+  * {
+    scroll-behavior: unset;
+    overscroll-behavior: none;
+    word-wrap: break-word;
+  }
+
+  html {
+    overscroll-behavior: none;
+  }
+
+  html,
+  body {
+    @apply text-black fontBody text-base antialiased overflow-hidden h-full;
+  }
+
+  html {
+    @apply min-w-[300px];
+  }
+
+  main {
+    @apply w-full min-h-full max-w-wrapper mx-auto relative z-main;
+  }
+
+
+  .richText {
+    * {
+      @apply leading-relaxed;
+    }
+
+    pre {
+      @apply bg-gray-900 rounded-[8px] px-4 overflow-x-scroll;
+
+      code {
+        @apply leading-[1] text-white;
+      }
+    }
+
+
+    * + * {
+      @apply mt-2;
+    }
+
+    ul {
+      @apply mb-6;
+
+      > li {
+        @apply ml-4 list-disc;
+      }
+
+      ul {
+        @apply ml-2;
+
+        li {
+          @apply list-decimal;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,384 @@
+.chat {
+  --button-background: #09041e;
+  --button-color: #fff;
+  --button-shadow: rgba(0, 86, 161, 0.4);
+  --button-shine-left: #00fd66;
+  --button-shine-right: #05dcf3;
+  --button-glow-start: #b000e8;
+  --button-glow-end: #009ffd;
+
+  @apply relative w-full h-full overflow-hidden;
+
+  .chatInner {
+    @apply relative w-full h-full;
+  }
+
+  .chatPanel {
+    --panel-height: 600px;
+    --panel-width: 430px;
+    --panel-head-height: 80px;
+
+    @apply overflow-hidden;
+
+    .chatPanelInner {
+      @apply relative w-full h-dvh transition-[width] duration-500 ease-in-out;
+    }
+
+    .chatPanelHead {
+      @apply relative flex justify-between h-[var(--panel-head-height)] px-4 bg-primary;
+
+      .chatBotInfo {
+        @apply relative z-10 flex gap-4 items-center h-[calc(100%-40px)] mt-[10px];
+
+        .chatBotName {
+          @apply flex flex-col gap-1 text-white font-semibold;
+
+          .nameTxt {
+            @apply text-[16px] leading-none;
+          }
+
+          .nameSubTxt {
+            @apply text-[10px] leading-none text-[#86ffe3];
+          }
+        }
+      }
+
+      .utils {
+        @apply relative z-10 flex gap-1;
+      }
+
+      .loadingEffect {
+        @apply absolute top-0 left-0 w-full h-full overflow-hidden;
+
+        .loadingEffectInner {
+          @apply relative w-full h-full;
+
+          &:before {
+            @apply content-[''] absolute z-0 top-0 right-0 w-full h-full;
+            background: linear-gradient(100deg, #29c363, var(--button-shine-right));
+            animation: loadingEffect linear 3s infinite;
+            animation-play-state: running;
+          }
+        }
+      }
+
+      .chatPanelExpand {
+        @apply flex items-center justify-center w-6 h-6 mt-[20px] bg-primary rounded-full transition-all;
+
+        .icon {
+          @apply w-[15px] h-[15px] text-white;
+
+          i {
+            @apply h-full;
+          }
+        }
+
+        &:hover {
+          @apply bg-white;
+          .icon {
+            @apply text-primary;
+          }
+        }
+      }
+
+      .chatPanelClose {
+        @apply flex items-center justify-center w-6 h-6 mt-[20px] bg-primary rounded-full transition-all;
+
+        .icon {
+          @apply w-3 h-3 text-white;
+
+          i {
+            @apply h-full;
+          }
+        }
+
+        &:hover {
+          @apply bg-white;
+          .icon {
+            @apply text-primary;
+          }
+        }
+      }
+    }
+
+    .chatPanelBody {
+      @apply relative z-10 h-[calc(100%-var(--panel-head-height)+20px)] mt-[-20px] bg-white rounded-xl;
+
+      .panelBodyInner {
+        @apply relative h-full p-4;
+
+        &:after {
+          @apply content-[''] absolute z-10 bottom-0 left-0 w-full h-[100px] pointer-events-none;
+          background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 30%);
+        }
+
+        .messageWindow {
+          @apply relative z-0 w-full h-full overflow-y-scroll;
+
+          .messageHistory {
+            @apply relative z-0 pb-[100px];
+
+            .messageItem {
+              @apply relative z-10 flex gap-4 w-full;
+
+              + .messageItem {
+                @apply mt-4;
+              }
+
+              &.robot {
+                @apply relative;
+              }
+
+              &.user {
+                @apply flex-row-reverse pr-3;
+
+                .contentWrap {
+                  .messageCloud {
+                    @apply bg-primary text-white;
+
+                    .cloudTail {
+                      @apply scale-x-[-1] left-[inherit] right-[-11px];
+                    }
+                  }
+                }
+              }
+
+              .avatarWrap {
+                @apply relative flex items-start;
+              }
+
+              .contentWrap {
+                @apply relative max-w-[calc(70%)];
+
+                .messageCloud {
+                  @apply relative bg-slate-100 rounded-xl;
+
+                  .messageTxt {
+                    @apply max-w-full py-2 px-4 leading-normal text-[14px] overflow-hidden;
+                  }
+
+                  .cloudTail {
+                    @apply absolute top-2 left-[-11px] w-[12px] h-[12px];
+
+                    img {
+                      @apply w-full h-full;
+                    }
+                  }
+                }
+
+                .options {
+                  @apply flex flex-col gap-2 justify-start items-start w-full mt-4;
+
+                  .optionItem {
+                    @apply w-full bg-white transition-[background];
+
+                    .optionInner {
+                      @apply rounded-md border border-solid border-primary px-3 py-1 text-[13px] text-left leading-snug transition-all;
+                      box-shadow:0px 5px 10px rgba(0, 86, 161, 0.2);
+                    }
+
+                    &:hover {
+                      .optionInner {
+                        @apply bg-primary text-white scale-110;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        .copyright {
+          @apply absolute z-[11] bottom-[10px] left-1/2 flex items-center gap-2 translate-x-[-50%] text-[10px] text-gray-500;
+
+          .label {
+            @apply leading-none mt-[4px];
+          }
+
+          img {
+            @apply object-contain;
+          }
+
+        }
+
+        .promptWindow {
+          @apply absolute z-20 bottom-0 left-0 w-full p-4;
+
+          .prompt {
+            @apply relative bg-[#e4f7eb] p-2 px-4 rounded-[50px];
+
+            input,
+            textarea {
+              @apply block bg-transparent w-[calc(100%-30px)] leading-normal;
+
+              &:focus {
+                @apply outline-none;
+              }
+
+              &:disabled {
+                @apply opacity-50;
+              }
+
+              &::placeholder {
+                @apply text-[14px] text-primary;
+                opacity: 0.7;
+              }
+            }
+
+            textarea {
+              resize: none;
+            }
+
+            .sendPrompt {
+              @apply absolute top-1 right-1 w-8 h-8 rounded-full bg-primary;
+
+              .sendCtaInner {
+                @apply relative w-full h-full flex items-center justify-center;
+              }
+
+              .promptIcon {
+                @apply relative z-[2] w-4 h-4 text-white ml-[-2px] mt-[2px];
+
+                i {
+                  @apply h-full;
+                }
+              }
+
+              &:hover,
+              &:focus {
+                .gradient {
+                  @apply opacity-100;
+
+                  &:before {
+                    animation-play-state: running;
+                  }
+                }
+              }
+
+              .gradient {
+                @apply absolute top-0 left-0 z-[1] w-full h-full rounded-full overflow-hidden opacity-0 transition-opacity duration-1000;
+
+                &:before {
+                  @apply content-[''] absolute z-0 top-1/2 left-0 right-0 w-[150%] h-[150%];
+                  background: linear-gradient(90deg, var(--button-shine-left), var(--button-shine-right));
+                  animation: rotate2 linear 3s infinite;
+                  transform: scale(1.05) translateY(-50%) rotate(0deg) translateZ(0);
+                  animation-play-state: paused;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.chatBotAvatar {
+  @apply w-[36px] h-[36px] overflow-hidden rounded-full border-2 border-solid border-primary;
+  box-shadow:0px 2px 10px rgba(0, 86, 161, 0.2);
+
+  &.sm {
+    @apply w-[28px] h-[28px];
+
+    .avatarIcon {
+      @apply w-[28px] h-[28px]
+    }
+  }
+}
+
+.userAvatar {
+  @apply w-[36px] h-[36px] overflow-hidden rounded-full bg-gray-50;
+
+  .avatarIcon {
+    @apply w-[36px] h-[36px] text-primary;
+
+    i {
+      @apply h-full;
+    }
+  }
+
+  &.sm {
+    @apply w-[28px] h-[28px];
+
+    .avatarIcon {
+      @apply w-[28px] h-[28px]
+    }
+  }
+}
+
+.loadingTxt {
+  @apply relative w-[50px] h-[20px];
+
+  > div {
+    @apply absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%];
+    @apply w-[0px] h-[0px] rounded-full bg-primary;
+    animation: loadingDot 1s ease-in-out infinite;
+
+    &:nth-child(1) {
+      @apply translate-x-[calc(-50%-15px)];
+    }
+
+    &:nth-child(1) {
+      animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+      @apply translate-x-[calc(-50%+15px)];
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+@keyframes loadingDot {
+  from {
+    @apply w-0 h-0;
+  }
+
+  50% {
+    @apply w-[8px] h-[8px];
+  }
+
+  to {
+    @apply w-0 h-0;
+  }
+}
+
+
+@keyframes rotate {
+  to {
+    transform: scale(1.05) translateY(-44px) rotate(360deg) translateZ(0);
+  }
+}
+
+@keyframes rotate2 {
+  to {
+    transform: scale(1.05) translateY(-50%) rotate(360deg) translateZ(0);
+  }
+}
+
+@keyframes loadingEffect {
+  from {
+    width:0%;
+  }
+  50% {
+    width:100%;
+  }
+  to {
+    width:0%;
+  }
+}
+
+@keyframes expand {
+  from {
+    width: 60%;
+    height: 60%;
+    opacity: 1;
+  }
+  to {
+    width: 200%;
+    height: 200%;
+    opacity: 0;
+  }
+}

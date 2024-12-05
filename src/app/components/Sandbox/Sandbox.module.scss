@@ -1,0 +1,65 @@
+@use './_components.scss';
+
+.moduleSandbox {
+  @apply w-full h-full;
+
+  .inner {
+    @apply pxContent;
+  }
+
+  .head {
+    @apply flex flex-col gap-4;
+  }
+
+  .body {
+    @apply relative;
+  }
+
+  .info {
+    @apply relative;
+  }
+
+  .title {
+    @apply h1;
+  }
+
+  .description {
+    @apply bodyText1;
+  }
+
+  article {
+    @apply py-4;
+
+    h4 {
+      @apply mb-2;
+    }
+  }
+
+  .iconWrap {
+    @apply flex gap-4;
+
+    .icon {
+      @apply w-10 h-10 text-primary hover:text-secondary;
+    }
+  }
+
+  .btnWrap {
+    @apply flex gap-4;
+  }
+
+  .mediaWrap {
+    .mediaItem {
+      @apply relative w-full h-[300px] border border-solid border-primary overflow-hidden rounded-sm bg-slate-50;
+    }
+  }
+
+  &.themeDark {
+    @apply bg-black text-white;
+
+    .iconWrap {
+      .icon {
+        @apply text-white hover:text-secondary;
+      }
+    }
+  }
+}
