@@ -34,7 +34,15 @@
       chatEl:null,
       isLoaded: false,
       isShow:false,
-      devEndpoint:'http://localhost:3000',
+      devEndpoint:(()=>{
+        try {
+          const s = document.currentScript || document.getElementById('ddp-chatbot-loader');
+          if(s && s.dataset && s.dataset.endpoint){
+            return s.dataset.endpoint;
+          }
+        }catch(e){}
+        return 'http://localhost:3000';
+      })(),
       apiKey:null,
     };
 

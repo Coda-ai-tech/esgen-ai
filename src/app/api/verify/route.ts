@@ -28,6 +28,11 @@ export async function POST(request:NextRequest) {
 
   const isExist = clientList.filter(item => item.host === clientUrl && item.key === key)
 
+  // Simple env bypass for deployments (e.g., Netlify preview)
+  if(process.env.ALLOW_ALL_HOSTS === 'true') {
+    return NextResponse.json({ message: "Hello DDP Chatbot" }, { status: 200 });
+  }
+
   if(isExist.length > 0) {
     return NextResponse.json({ message: "Hello DDP Chatbot" }, { status: 200 });
   }

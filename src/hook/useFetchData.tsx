@@ -3,11 +3,16 @@ import { notFound } from 'next/navigation';
 import { i18n } from '@/app/i18n.config';
 import { DataTypeProps } from '@/types';
 
-const { NEXT_PUBLIC_DEV_API_ENDPOINT_SUFFIXE, NEXT_PUBLIC_DEV_LOCAL_API_ENDPOINT, NEXT_PUBLIC_DEV_PREV_API_ENDPOINT } =
-  process.env;
+const {
+  NEXT_PUBLIC_DEV_API_ENDPOINT_SUFFIXE,
+  NEXT_PUBLIC_DEV_LOCAL_API_ENDPOINT,
+  NEXT_PUBLIC_DEV_PREV_API_ENDPOINT,
+  NEXT_PUBLIC_SITE_ENDPOINT,
+} = process.env;
 
 const endpointPrefixList = {
-  test: NEXT_PUBLIC_DEV_API_ENDPOINT_SUFFIXE,
+  // Fallback to '/api' so public JSON like /api/en/home.json works on Netlify
+  test: NEXT_PUBLIC_DEV_API_ENDPOINT_SUFFIXE || '/api',
 };
 
 const exceptionCase = (slug: string[]) => {
@@ -33,11 +38,15 @@ export const GetPageData = async (dataType: DataTypeProps, slug: string[], from?
   const endpoint = `${endpointPrefixList[dataType as keyof typeof endpointPrefixList]}/${slug.join('/')}.json`;
 
   try {
-    const response = await fetch(
-      `${
-        process.env.NODE_ENV === 'production' ? NEXT_PUBLIC_DEV_PREV_API_ENDPOINT : NEXT_PUBLIC_DEV_LOCAL_API_ENDPOINT
-      }${endpoint}`
-    );
+    const basePrefix =
+      process.env.NODE_ENV === 'production'
+        ? (NEXT_PUBLIC_DEV_PREV_API_ENDPOINT || '')
+        : (NEXT_PUBLIC_DEV_LOCAL_API_ENDPOINT || '');
+
+    // Ensure leading slash for same-origin relative fetches
+    const url = `${basePrefix}${endpoint}`.startsWith('/') ? `${basePrefix}${endpoint}` : `/${basePrefix}${endpoint}`;
+
+    const response = await fetch(url.replace(/\/\/+/, '/'));
     const data = await response.json();
     return data;
   } catch (error) {
@@ -75,7 +84,7 @@ export const GetPageMeta = async (dataType: DataTypeProps, slug: string[]) => {
       };
 
       return {
-        metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_ENDPOINT as string),
+        metadataBase: new URL((NEXT_PUBLIC_SITE_ENDPOINT as string) || 'http://localhost'),
         title,
         description,
         keywords,

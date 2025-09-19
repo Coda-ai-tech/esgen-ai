@@ -10,6 +10,20 @@ First, run the development server:
 npm run dev
 ```
 
+## Environment
+
+Create `.env` with at least:
+
+```
+NEXT_PUBLIC_DEV_LOCAL_API_ENDPOINT=
+NEXT_PUBLIC_DEV_PREV_API_ENDPOINT=
+NEXT_PUBLIC_DEV_API_ENDPOINT_SUFFIXE=/api
+NEXT_PUBLIC_SITE_ENDPOINT=https://your-site.example
+NEXT_PUBLIC_AI_ENDPOINT=https://your-ai-endpoint.example
+# For preview deploys to bypass /api/verify host check
+# ALLOW_ALL_HOSTS=true
+```
+
 ## Launcher Script
 
 ```bash
