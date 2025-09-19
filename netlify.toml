@@ -1,0 +1,20 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+  # Next.js runtime handles routing; we use the Netlify Next adapter automatically
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[context.production.environment]
+  # These can be set in Netlify UI; here as documentation defaults
+  NEXT_PUBLIC_DEV_API_ENDPOINT_SUFFIXE = "/api"
+
+[context.deploy-preview.environment]
+  ALLOW_ALL_HOSTS = "true"
+  NEXT_PUBLIC_DEV_API_ENDPOINT_SUFFIXE = "/api"
+
+
