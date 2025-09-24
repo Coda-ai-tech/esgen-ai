@@ -50,7 +50,9 @@ export function middleware(request: NextRequest) {
   // Rewrite (don't redirect) if there is no locale
   if (pathnameIsMissingLocale) {
     const locale = getLocale(request);
-    const rewriteUrl = new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, request.url);
+    // Handle root path specially
+    const targetPath = pathname === '/' ? `/${locale}` : `/${locale}${pathname}`;
+    const rewriteUrl = new URL(targetPath, request.url);
     return NextResponse.rewrite(rewriteUrl);
   }
 
