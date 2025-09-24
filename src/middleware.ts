@@ -47,13 +47,12 @@ export function middleware(request: NextRequest) {
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
 
-  // Rewrite (don't redirect) if there is no locale
+  // Redirect if there is no locale
   if (pathnameIsMissingLocale) {
     const locale = getLocale(request);
     // Handle root path specially
     const targetPath = pathname === '/' ? `/${locale}` : `/${locale}${pathname}`;
-    const rewriteUrl = new URL(targetPath, request.url);
-    return NextResponse.rewrite(rewriteUrl);
+    return NextResponse.redirect(new URL(targetPath, request.url));
   }
 
   const requestHeaders = new Headers(request.headers);
