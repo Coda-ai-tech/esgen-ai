@@ -3,6 +3,11 @@ import { Module } from '@/types/index';
 import { ModuleList } from '@/types/modules';
 
 export const GetModule = (data: Record<string, any>) => {
+  // Ensure data exists and has content array
+  if (!data || !Array.isArray(data.content)) {
+    return <section className='noContent'>No content available.</section>;
+  }
+
   const generateModule = (item: Module<any, any>, index: number) => {
     const key = `module${index}`;
 
@@ -20,5 +25,5 @@ export const GetModule = (data: Record<string, any>) => {
     );
   };
 
-  return data?.content.map((item: Module<any, any>, index: number) => generateModule(item, index));
+  return data.content.map((item: Module<any, any>, index: number) => generateModule(item, index));
 };

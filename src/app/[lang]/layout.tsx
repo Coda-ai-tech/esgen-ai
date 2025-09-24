@@ -26,17 +26,15 @@ export default async function RootLayout({
 
   return (
     <html lang={lang}>
-      {globalData && (
-        <>
-          <link rel='icon' href={globalData.favIcon ? globalData.favIcon : '/assets/favicon.ico'} sizes='any' />
-          <body>
-            <ConfigContextProvider>
-              <GlobalConfig data={globalData} />
-              <MainWrapper>{children}</MainWrapper>
-            </ConfigContextProvider>
-          </body>
-        </>
-      )}
+      <head>
+        <link rel='icon' href={globalData?.favIcon ? globalData.favIcon : '/assets/favicon.ico'} sizes='any' />
+      </head>
+      <body>
+        <ConfigContextProvider>
+          {globalData && <GlobalConfig data={globalData} />}
+          <MainWrapper>{children}</MainWrapper>
+        </ConfigContextProvider>
+      </body>
     </html>
   );
 }

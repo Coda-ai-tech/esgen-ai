@@ -11,8 +11,8 @@ const {
 } = process.env;
 
 const endpointPrefixList = {
-  // Fallback to '/api' so public JSON like /api/en/home.json works on Netlify
-  test: NEXT_PUBLIC_DEV_API_ENDPOINT_SUFFIXE || '/api',
+  // Prefer '/content' to avoid colliding with Next.js Route Handlers on /api
+  test: NEXT_PUBLIC_DEV_API_ENDPOINT_SUFFIXE || '/content',
 };
 
 const exceptionCase = (slug: string[]) => {
@@ -56,7 +56,24 @@ export const GetPageData = async (dataType: DataTypeProps, slug: string[], from?
       }${endpoint}) ====`
     );
     console.error(error);
-    return notFound();
+    
+    // Return fallback data instead of throwing notFound()
+    return {
+      meta: {
+        title: "ESGEN",
+        description: "ESG Report Generator",
+        keywords: "ESG, Sustainability",
+        ogImage: "/assets/img/logo.png"
+      },
+      content: [
+        {
+          id: "fallback-chat",
+          module: "Chat",
+          moduleOption: { isDark: false },
+          content: {}
+        }
+      ]
+    };
   }
 };
 

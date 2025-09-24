@@ -1,0 +1,32 @@
+{
+  "dictionary": {
+    "siteTitle": "DDP Next Template",
+    "copyright": "© 1996-2024 DDP",
+    "error": {
+      "notFound": {
+        "title": "Thank you for visiting.",
+        "description": "We are sorry, the page you're looking for is no longer available."
+      },
+      "internsalServer": {
+        "title": "Internal Server Error",
+        "description": "Please check"
+      }
+    },
+    "button": {
+      "hide": "Hide",
+      "learnMore": "Learn More",
+      "search": "Symbol Search",
+      "back": "Back",
+      "prev": "Previous",
+      "skipNext":"Skip and Next",
+      "saveNext":"Save and Next",
+      "next": "Next",
+      "edit": "Edit",
+      "delete": "Delete",
+      "submit": "Submit",
+      "update": "Update",
+      "all": "all",
+      "save":"Save"
+    }
+  }
+}

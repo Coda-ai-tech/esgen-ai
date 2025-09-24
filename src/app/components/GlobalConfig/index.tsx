@@ -14,12 +14,19 @@ const GlobalConfig = ({ data }: { data: GlobalDataProps }) => {
   const route = useRouter();
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      const REQUIRE_IFRAME = process.env.NEXT_PUBLIC_REQUIRE_IFRAME === 'true';
       const inIframe = () => window.self !== window.top;
       if (inIframe()) {
         document.body.classList.add('inIframe');
       } else {
         document.body.classList.add('noIframe');
-        return route.push('https://google.com');
+        // Do not redirect away by default; allow standalone rendering.
+        // If a hard requirement is desired, enable NEXT_PUBLIC_REQUIRE_IFRAME=true
+        if (REQUIRE_IFRAME) {
+          try {
+            window.location.href = '/';
+          } catch {}
+        }
       }
     }
   }, [route]);
@@ -35,11 +42,11 @@ const GlobalConfig = ({ data }: { data: GlobalDataProps }) => {
         }),
       }).then((res) => {
         if (res.status === 200) {
-          // Do nothing...
-          console.log(res);
-        } else {
-          return route.push('https://google.com');
+          // verified
+          return;
         }
+        // If verification fails, do not hard redirect in standalone mode
+        // This avoids blank pages when not embedded via launcher
       });
     };
 

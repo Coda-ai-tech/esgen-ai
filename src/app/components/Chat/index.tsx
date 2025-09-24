@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+// import { AnimatePresence, motion } from 'framer-motion';
 import { remark } from 'remark';
 import html from 'remark-html';
 import Image from 'next/image';
@@ -59,6 +59,7 @@ const Chat = () => {
     setTimeout(() => {
       setMessageHistory([
         {
+          id: `${Date.now()}-${Math.random()}`,
           role: 'bot',
           parts: 'Hello 👋 How can I help you?',
           options: defaultQuestions,
@@ -72,6 +73,7 @@ const Chat = () => {
       return [
         ...prev,
         {
+          id: `${Date.now()}-${Math.random()}`,
           role: 'user',
           parts: msg,
           options: null,
@@ -92,6 +94,7 @@ const Chat = () => {
       return [
         ...prev,
         {
+          id: `${Date.now()}-${Math.random()}`,
           role: 'bot',
           parts: 'loading',
         },
@@ -99,7 +102,21 @@ const Chat = () => {
     });
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_AI_ENDPOINT}`, {
+      const AI_ENDPOINT = process.env.NEXT_PUBLIC_AI_ENDPOINT || '';
+      if (!AI_ENDPOINT) {
+        // Frontend-only fallback: no backend call
+        const canned = `**ESGEN (Preview)**\n\nYou said: \n\n> ${txt}\n\nThis is a placeholder reply. The AI backend is not connected yet. You can proceed with the UI and deploy safely.`;
+        const processedContent = await remark().use(html).process(canned);
+        setIshold(false);
+        setMessageHistory((prev: any) => {
+          const newHistory = [...prev];
+          newHistory[newHistory.length - 1].parts = processedContent.value as any;
+          return newHistory;
+        });
+        return;
+      }
+
+      const res = await fetch(`${AI_ENDPOINT}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -134,7 +151,7 @@ const Chat = () => {
       setIshold(false);
       setMessageHistory((prev: any) => {
         const newHistory = [...prev];
-        newHistory[newHistory.length - 1].parts = error;
+        newHistory[newHistory.length - 1].parts = error as any;
         return newHistory;
       });
     }
@@ -165,148 +182,119 @@ const Chat = () => {
                   </div>
                 </button>
               </div>
-              <AnimatePresence>
-                {isHold && (
-                  <motion.div
-                    className={`${styles.loadingEffect}`}
-                    exit={{ opacity: 0 }}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ type: 'spring', duration: 0.5, ease: 'easeInOut' }}
-                  >
-                    <div className={`${styles.loadingEffectInner}`}></div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {/* Loading indicator (non-animated) */}
+              {isHold && (
+                <div className={`${styles.loadingEffect}`}>
+                  <div className={`${styles.loadingEffectInner}`}></div>
+                </div>
+              )}
             </div>
             <div className={`${styles.chatPanelBody}`}>
               <div className={`${styles.panelBodyInner}`}>
                 <div ref={historyEl} className={`${styles.messageWindow}`}>
                   <div className={`${styles.messageHistory}`}>
-                    <AnimatePresence>
-                      {messageHistory?.map((item, index) => {
-                        return (
-                          <motion.div
-                            className={`${styles.messageItem} ${styles[item.role]}`}
-                            key={index}
-                            exit={{ y: '10px', opacity: 0 }}
-                            initial={{ y: '10px', opacity: 0 }}
-                            animate={{ y: '0px', opacity: 1 }}
-                            transition={{ type: 'spring', duration: 0.5, ease: 'easeInOut' }}
-                          >
-                            <div className={`${styles.avatarWrap}`}>
-                              {item.role === 'user' && <UserAvatar size='sm' />}
-                              {item.role === 'bot' && <BotAvatar size='sm' />}
-                            </div>
-                            <div className={`${styles.contentWrap}`}>
-                              <div className={`${styles.messageCloud}`}>
-                                {item.parts === 'loading' ? (
-                                  <div className={`${styles.messageTxt}`}>
-                                    <div className={`${styles.loadingTxt}`}>
-                                      <div />
-                                      <div />
-                                      <div />
-                                    </div>
+                    {messageHistory?.map((item, index) => {
+                      return (
+                        <div
+                          className={`${styles.messageItem} ${styles[item.role]}`}
+                          key={item.id || index}
+                        >
+                          <div className={`${styles.avatarWrap}`}>
+                            {item.role === 'user' && <UserAvatar size='sm' />}
+                            {item.role === 'bot' && <BotAvatar size='sm' />}
+                          </div>
+                          <div className={`${styles.contentWrap}`}>
+                            <div className={`${styles.messageCloud}`}>
+                              {item.parts === 'loading' ? (
+                                <div className={`${styles.messageTxt}`}>
+                                  <div className={`${styles.loadingTxt}`}>
+                                    <div />
+                                    <div />
+                                    <div />
                                   </div>
-                                ) : (
-                                  <div
-                                    className={`${styles.messageTxt} richText`}
-                                    dangerouslySetInnerHTML={{ __html: item.parts }}
-                                  />
-                                )}
-
-                                <div className={`${styles.cloudTail}`}>
-                                  <Image
-                                    width={100}
-                                    height={100}
-                                    src={`/assets/img/tail${item.role === 'user' ? '_user' : ''}.png`}
-                                    alt='user'
-                                  />
                                 </div>
-                              </div>
-                              {item.options && (
-                                <div className={`${styles.options}`}>
-                                  <AnimatePresence>
-                                    {item.options.map((option: string, index: number) => {
-                                      return (
-                                        <motion.button
-                                          key={index}
-                                          className={`${styles.optionItem}`}
-                                          onClick={() => {
-                                            sendUserMessage(option);
-                                          }}
-                                          exit={{ y: 5, opacity: 0 }}
-                                          initial={{ y: 5, opacity: 0 }}
-                                          animate={{ y: 0, opacity: 1 }}
-                                          transition={{
-                                            type: 'spring',
-                                            delay: index * 0.1,
-                                            duration: 0.5,
-                                            ease: 'easeInOut',
-                                          }}
-                                        >
-                                          <div className={`${styles.optionInner}`}>
-                                            {index + 1}. {option}
-                                          </div>
-                                        </motion.button>
-                                      );
-                                    })}
-                                  </AnimatePresence>
-                                </div>
+                              ) : (
+                                <div
+                                  className={`${styles.messageTxt} richText`}
+                                  dangerouslySetInnerHTML={{ __html: item.parts }}
+                                />
                               )}
+
+                              <div className={`${styles.cloudTail}`}>
+                                <Image
+                                  width={100}
+                                  height={100}
+                                  src={`/assets/img/tail${item.role === 'user' ? '_user' : ''}.png`}
+                                  alt='user'
+                                />
+                              </div>
                             </div>
-                          </motion.div>
-                        );
-                      })}
-                    </AnimatePresence>
+                            {item.options && (
+                              <div className={`${styles.options}`}>
+                                {item.options.map((option: string, index: number) => {
+                                  return (
+                                    <button
+                                      key={index}
+                                      className={`${styles.optionItem}`}
+                                      onClick={() => {
+                                        sendUserMessage(option);
+                                      }}
+                                    >
+                                      <div className={`${styles.optionInner}`}>
+                                        {index + 1}. {option}
+                                      </div>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-                <AnimatePresence>
-                  <motion.div
-                    className={`${styles.promptWindow}`}
-                    exit={{ bottom: '50px', opacity: 0 }}
-                    initial={{ bottom: '50px', opacity: 0 }}
-                    animate={{ bottom: isShowCopyright ? '20px' : '0px', opacity: 1 }}
-                    transition={{ type: 'spring', delay: 0.2, duration: 0.5, ease: 'easeInOut' }}
-                  >
-                    <div className={`${styles.prompt}`}>
-                      <textarea
-                        ref={promptEl}
-                        rows={1}
-                        placeholder='Type your message here...'
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            if (String(promptEl.current?.value.trim()).length < 1) return;
-                            sendUserMessage(promptEl.current?.value);
-                            promptEl.current!.value = '';
-                          }
-                        }}
-                        disabled={isHold ? true : false}
-                      />
-                      <button
-                        className={`${styles.sendPrompt}`}
-                        onClick={(e) => {
-                          if (!promptEl.current?.value || promptEl.current?.value === '') {
-                            promptEl.current?.focus();
-                            return;
-                          }
+                <div
+                  className={`${styles.promptWindow}`}
+                  style={{ bottom: isShowCopyright ? '20px' : '0px', opacity: 1 }}
+                >
+                  <div className={`${styles.prompt}`}>
+                    <textarea
+                      ref={promptEl}
+                      rows={1}
+                      placeholder='Type your message here...'
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
                           if (String(promptEl.current?.value.trim()).length < 1) return;
                           sendUserMessage(promptEl.current?.value);
                           promptEl.current!.value = '';
+                        }
+                      }}
+                      disabled={isHold ? true : false}
+                    />
+                    <button
+                      className={`${styles.sendPrompt}`}
+                      onClick={(e) => {
+                        if (!promptEl.current?.value || promptEl.current?.value === '') {
                           promptEl.current?.focus();
-                          e.preventDefault();
-                        }}
-                      >
-                        <div className={`${styles.sendCtaInner}`}>
-                          <div className={`${styles.promptIcon}`}>
-                            <SvgIcon name='send' />
-                          </div>
-                          <div className={`${styles.gradient}`} />
+                          return;
+                        }
+                        if (String(promptEl.current?.value.trim()).length < 1) return;
+                        sendUserMessage(promptEl.current?.value);
+                        promptEl.current!.value = '';
+                        promptEl.current?.focus();
+                        e.preventDefault();
+                      }}
+                    >
+                      <div className={`${styles.sendCtaInner}`}>
+                        <div className={`${styles.promptIcon}`}>
+                          <SvgIcon name='send' />
                         </div>
-                      </button>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
+                        <div className={`${styles.gradient}`} />
+                      </div>
+                    </button>
+                  </div>
+                </div>
                 {isShowCopyright && (
                   <div className={`${styles.copyright}`}>
                     <div className={`${styles.label}`}>Powerd by</div>

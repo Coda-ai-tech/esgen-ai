@@ -22,9 +22,15 @@ const HomePage = async ({
   params: Promise<{ lang: Locale }>;
   searchParams?: Promise<{ [key: string]: string }>;
 }) => {
-  const { lang } = await params;
-  const pageData = await GetPageData(dataType, [lang, 'home'], '', await searchParams);
-  return <>{GetModule(pageData)}</>;
+  try {
+    const { lang } = await params;
+    const pageData = await GetPageData(dataType, [lang, 'home'], '', await searchParams);
+    return <>{GetModule(pageData)}</>;
+  } catch (error) {
+    console.error('HomePage error:', error);
+    // Fallback UI
+    return <section>Loading ESGEN...</section>;
+  }
 };
 
 export default HomePage;

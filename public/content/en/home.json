@@ -1,0 +1,20 @@
+{
+  "meta": {
+    "title": "DDP Chatbot",
+    "description": "Chatbot Test",
+    "keywords":"Chatbot",
+    "ogImage": "/assets/img/share_1200x630.jpg"
+  },
+  "pageOption": null,
+  "content": [
+    {
+      "id": null,
+      "module": "Chat",
+      "moduleOption":{
+        "isDark":false
+      },
+      "content": {
+      }
+    }
+  ]
+}

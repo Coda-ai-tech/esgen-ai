@@ -33,6 +33,7 @@ export function middleware(request: NextRequest) {
   if (
     pathname.includes('/manifest.json') ||
     pathname.includes('/assets') ||
+    pathname.includes('/content') ||
     pathname.includes('/api') ||
     pathname.includes('/launcher/dist')
   ) {
@@ -46,13 +47,11 @@ export function middleware(request: NextRequest) {
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
 
-  // Redirect if there is no locale
+  // Rewrite (don't redirect) if there is no locale
   if (pathnameIsMissingLocale) {
     const locale = getLocale(request);
-
-    // e.g. incoming request is /products
-    // The new URL is now /en/products
-    return NextResponse.redirect(new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, request.url));
+    const rewriteUrl = new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, request.url);
+    return NextResponse.rewrite(rewriteUrl);
   }
 
   const requestHeaders = new Headers(request.headers);
